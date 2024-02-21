@@ -52,14 +52,18 @@ public class SortExpressionComparer<T> : List<SortExpression<T>>, IComparer<T>
                 continue;
             }
 
+            // In case the column in Mud's DataTable is of a Nullable type all the rows with a Null value will end-up on top.
+            // This fixes the issue and either sorts them to the top or the bottom in accordance with the SortDirection.
             if (xValue is null)
             {
-                return -1;
+                // return -1; original line of code
+                return (item.Direction == SortDirection.Ascending) ? -int.MaxValue : int.MaxValue;
             }
 
             if (yValue is null)
             {
-                return 1;
+                // return 1; original line of code
+                return (item.Direction == SortDirection.Ascending) ? int.MaxValue : -int.MaxValue;
             }
 
             var result = xValue.CompareTo(yValue);
